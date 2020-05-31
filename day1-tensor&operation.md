@@ -444,12 +444,90 @@ dot/cross	|内积/外积
 inverse	|求逆矩阵
 svd	|奇异值分解
 
+### 4.6 张量运算的开销
+索引操作是不会开辟新内存的，而像y = x + y这样的运算是会新开内存的，然后将y指向新内存。为了演示这一点，我们可以使用Python自带的id函数：如果两个实例的ID一致，那么它们所对应的内存地址相同；反之则不同。
+```python
+x = torch.tensor([1, 2])
+y = torch.tensor([3, 4])
+id_before = id(y)
+y = y + x
+print(id(y) == id_before) # False 
+```
 
+**减少内存开销的方法:**
 
+* [:]
+* 运算符全名函数中的out参数或者自加运算符+=(也即add_())达到上述效果，例如torch.add(x, y, out=y)和y += x or y.add_(x)。
+```python
+x = torch.tensor([1, 2])
+y = torch.tensor([3, 4])
+id_before = id(y)
+torch.add(x, y, out=y) # y += x, y.add_(x)
+print(id(y) == id_before) # True
+```
+out:
+```python
+tensor([4, 6])
+True
+```
 
+### 4.7 Tensor和NumPy相互转换
+#### 4.7.1 Tensor转为numpy——.numpy():共享内存
+```python
+a = torch.ones(5)
+b = a.numpy()
+print(a, b)
 
+a += 1
+print(a, b)
+b += 1
+print(a, b)
+```
+out:
+```python
+tensor([1., 1., 1., 1., 1.]) [1. 1. 1. 1. 1.]
+tensor([2., 2., 2., 2., 2.]) [2. 2. 2. 2. 2.]
+tensor([3., 3., 3., 3., 3.]) [3. 3. 3. 3. 3.]
+```
 
+#### 4.7.2 numpy转为tensor
+* from_numpy()：共享内存；
+* torch.tensor()：此方法总是会进行数据拷贝（就会消耗更多的时间和空间），所以返回的Tensor和原来的数据不再共享内存。
+```python
+#共享内存
+a = np.ones(5)
+b = torch.from_numpy(a)
+print(a, b)
+a += 1
+print(a, b)
+b += 1
+print(a, b)
 
+#生成拷贝
+c = torch.tensor(a)
+a += 1
+print(a, c)
+```
+out:
+```python
+[1. 1. 1. 1. 1.] tensor([1., 1., 1., 1., 1.], dtype=torch.float64)
+[2. 2. 2. 2. 2.] tensor([2., 2., 2., 2., 2.], dtype=torch.float64)
+[3. 3. 3. 3. 3.] tensor([3., 3., 3., 3., 3.], dtype=torch.float64)
+[4. 4. 4. 4. 4.] tensor([3., 3., 3., 3., 3.], dtype=torch.float64)
+```
+
+### 4.8 Tensor on GPU
+用方法to()可以将Tensor在CPU和GPU（需要硬件支持）之间相互移动。
+```python
+# 以下代码只有在PyTorch GPU版本上才会执行
+if torch.cuda.is_available():
+    device = torch.device("cuda")          # GPU
+    y = torch.ones_like(x, device=device)  # 直接创建一个在GPU上的Tensor
+    x = x.to(device)                       # 等价于 .to("cuda")
+    z = x + y
+    print(z)
+    print(z.to("cpu", torch.double))       # to()还可以同时更改数据类型
+```
 
 
 
