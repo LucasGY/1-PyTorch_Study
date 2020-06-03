@@ -8,13 +8,13 @@ plt.imshow(img)
 plt.show()
 
 # resize
-Resize = transforms.Resize((32, 32))
+Resize = transforms.Resize((500, 500))  # 原图像size>>resize:导致图片过于模糊
 resize_img = Resize(img)
 plt.imshow(resize_img)
 plt.show()
 
 # 随机裁剪
-RandomCrop = transforms.RandomCrop(32, padding=4)
+RandomCrop = transforms.RandomCrop(500, padding=4)
 random_image = RandomCrop(resize_img)
 plt.imshow(random_image)
 plt.show()
