@@ -68,15 +68,15 @@ class LeNetSequentialOrderDict(nn.Module):
         return x
 
 
-net = LeNetSequential(classes=2)
-# net = LeNetSequentialOrderDict(classes=2)
+# net = LeNetSequential(classes=2)
+# # net = LeNetSequentialOrderDict(classes=2)
+# #
+# fake_img = torch.randn((4, 3, 32, 32), dtype=torch.float32)
 #
-fake_img = torch.randn((4, 3, 32, 32), dtype=torch.float32)
-
-output = net(fake_img)
-
-print(net)
-print(output)
+# output = net(fake_img)
+#
+# print(net)
+# print(output)
 
 
 # ============================ ModuleList

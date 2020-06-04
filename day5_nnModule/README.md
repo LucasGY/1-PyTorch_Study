@@ -79,13 +79,35 @@ nn.Sequential是nn.Module的容器，用于按顺序包装一组网络层。
 
 ![20200603162658](https://raw.githubusercontent.com/LucasGY/TempImage/master/img/20200603162658.png)
 
+nn.Sequential继承于nn.Module，因此也有8个字典属性：
+![20200604080920](https://raw.githubusercontent.com/LucasGY/TempImage/master/img/20200604080920.png)
 
+#### nn.Sequential的两种构建方式
 
+```python
+# Example of using Sequential
+model = nn.Sequential(
+            nn.Conv2d(1,20,5),
+            nn.ReLU(),
+            nn.Conv2d(20,64,5),
+            nn.ReLU()
+        )
 
+# Example of using Sequential with OrderedDict
+model = nn.Sequential(OrderedDict([
+            ('conv1', nn.Conv2d(1,20,5)),
+            ('relu1', nn.ReLU()),
+            ('conv2', nn.Conv2d(20,64,5)),
+            ('relu2', nn.ReLU())
+        ]))
+```
+区别：在执行Sequential的实例化时，跳入__init__()：
+* Sequential：_modules有序字典的键是数字；
+* Sequential with OrderedDict：_modules有序字典的键是你自己定义的名字，如；'conv1'。
+![20200604081240](https://raw.githubusercontent.com/LucasGY/TempImage/master/img/20200604081240.png)
+![20200604081542](https://raw.githubusercontent.com/LucasGY/TempImage/master/img/20200604081542.png)
 
-
-
-
+![20200604082103](https://raw.githubusercontent.com/LucasGY/TempImage/master/img/20200604082103.png)
 
 
 
